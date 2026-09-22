@@ -155,9 +155,19 @@
   <footer>Valores calculados diretamente da base de vendas e liquidação — não passam por planilha manual.</footer>
 </div>
 
-<script>const RAW_DATA = [];</script>
+<script><script>let RAW_DATA = [];</script>
 <script>
-(function(){
+(async function(){
+  try {
+    const resp = await fetch('data.json', {cache: 'no-store'});
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    RAW_DATA = await resp.json();
+  } catch (err) {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('emptyState').textContent = 'Não consegui carregar os dados (data.json). Tente recarregar a página.';
+    console.error('Falha ao carregar data.json:', err);
+  }
+
   const fmt = (v) => v == null ? '—' : v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   const fmtPct = (v) => (v*100).toFixed(0) + '%';
   const fmtDate = (v) => {
